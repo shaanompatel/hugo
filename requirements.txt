@@ -1,10 +1,13 @@
 annotated-types==0.7.0
 anyio==4.9.0
+APScheduler==3.11.0
 asgiref==3.8.1
 cachetools==5.5.2
 certifi==2025.4.26
 charset-normalizer==3.4.1
 Django==5.2
+django-apscheduler==0.7.0
+django-mailbox==4.10.1
 google-auth==2.39.0
 google-genai==1.12.1
 h11==0.16.0
@@ -27,5 +30,6 @@ sqlparse==0.5.3
 typing-inspection==0.4.0
 typing_extensions==4.13.2
 tzdata==2025.2
+tzlocal==5.3.1
 urllib3==2.4.0
 websockets==15.0.1

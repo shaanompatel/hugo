@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     "django_mailbox",
     "django_apscheduler",
     'chat',
-    'mail.apps.MailConfig',
-    'optimization'
+    'mail',
+    'optimization',
+    'dash',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'hugo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

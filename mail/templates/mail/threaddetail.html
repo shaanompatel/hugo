@@ -1,20 +1,155 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <h1>Thread: {{ thread.subject }}</h1>
-    <p>Started: {{ thread.created_at }}</p>
-    <table border="1" cellpadding="4">
-      <tr><th>Time</th><th>Dir</th><th>From</th><th>To</th><th>Body</th></tr>
-      {% for m in thread.messages.all %}
-      <tr>
-        <td>{{ m.timestamp }}</td>
-        <td>{{ m.get_direction_display }}</td>
-        <td>{{ m.from_address }}</td>
-        <td>{{ m.to_addresses }}</td>
-        <td><pre>{{ m.body }}</pre></td>
-      </tr>
-      {% endfor %}
-    </table>
-    <a href="{% url 'thread_list' %}">← Back</a>
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Hugo AI - Procurement Assistant{% endblock %}
+
+{% block chat_active %}active{% endblock %}
+
+{% block extra_css %}
+    body {
+      background-color: #f8f9fa;
+      color: #495057;
+    }
+    .thread-container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .thread-header {
+      background: linear-gradient(135deg, #6f42c1, #007bff);
+      color: white;
+      padding: 1.5rem;
+    }
+    .thread-body {
+      background-color: white;
+      min-height: 400px;
+      padding: 1rem;
+    }
+    .message-bubble {
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      position: relative;
+    }
+    .message-inbound {
+      background-color: #e9ecef;
+      border-bottom-left-radius: 0;
+    }
+    .message-outbound {
+      background-color: #cfe2ff;
+      border-bottom-right-radius: 0;
+      margin-left: auto;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .message-time {
+      color: #6c757d;
+    }
+    .message-from {
+      font-weight: 600;
+    }
+    .message-to {
+      color: #6c757d;
+    }
+    .message-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .message-direction-badge {
+      position: absolute;
+      top: -10px;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .direction-in {
+      left: 10px;
+      background-color: #6c757d;
+      color: white;
+    }
+    .direction-out {
+      right: 10px;
+      background-color: #007bff;
+      color: white;
+    }
+    .back-link {
+      display: inline-block;
+      margin: 1rem 0;
+      text-decoration: none;
+      color: #6f42c1;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .back-link:hover {
+      color: #007bff;
+      transform: translateX(-3px);
+    }
+  {% endblock %}
+  
+  {% block content %}
+  <div class="container">
+    <a href="{% url 'mail:thread_list' %}" class="back-link">
+      <i class="fas fa-arrow-left me-1"></i> Back to Inbox
+    </a>
+    
+    <div class="thread-container">
+      <div class="thread-header">
+        <h2 class="mb-1">{{ thread.subject|default:"(no subject)" }}</h2>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <span><i class="far fa-calendar-alt me-1"></i> Started on {{ thread.created_at|date:"F d, Y" }} at {{ thread.created_at|time:"H:i" }}</span>
+          </div>
+          <span class="badge bg-light text-dark rounded-pill px-3 py-2">{{ thread.messages.count }} message{% if thread.messages.count != 1 %}s{% endif %}</span>
+        </div>
+      </div>
+      
+      <div class="thread-body">
+        {% if thread.messages.all %}
+          <div class="timeline">
+            {% for m in thread.messages.all %}
+              <div class="message-container {% if m.direction == 'IN' %}w-75{% else %}w-75 ms-auto{% endif %}">
+                <div class="message-bubble {% if m.direction == 'IN' %}message-inbound{% else %}message-outbound{% endif %}">
+                  <span class="message-direction-badge {% if m.direction == 'IN' %}direction-in{% else %}direction-out{% endif %}">
+                    {{ m.get_direction_display }}
+                  </span>
+                  <div class="message-header">
+                    <div class="message-from">
+                      <i class="fas fa-user me-1"></i> {{ m.from_address }}
+                    </div>
+                    <div class="message-time">
+                      <i class="far fa-clock me-1"></i> {{ m.timestamp|date:"M d, Y" }} at {{ m.timestamp|time:"H:i" }}
+                    </div>
+                  </div>
+                  {% if m.to_addresses %}
+                    <div class="message-to mb-2">
+                      <i class="fas fa-arrow-right me-1"></i> To: {{ m.to_addresses }}
+                    </div>
+                  {% endif %}
+                  <div class="message-body">
+                    {{ m.body }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <i class="fas fa-envelope-open fa-4x mb-3 text-muted"></i>
+            <h4 class="text-muted">No messages in this thread</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <a href="{% url 'mail:thread_list' %}" class="back-link">
+      <i class="fas fa-arrow-left me-1"></i> Back to Inbox
+    </a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  {% endblock %}

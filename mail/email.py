@@ -1,4 +1,3 @@
-
 from django_mailbox.signals import message_received
 from django.dispatch import receiver
 from django.core.mail import EmailMessage, make_msgid
@@ -23,8 +22,8 @@ def auto_reply(sender, message, **kwargs):
     from_addr = from_addr.strip().strip("[]")
 
     msg_id    = message.message_id or ""
-
-    in_reply  = message.in_reply_to or ""
+    email_obj = message.get_email_object()
+    in_reply  = message.in_reply_to or email_obj.get("In-Reply-To")
     subj      = message.subject or ""
     body_text = message.text or message.html or ""
     now       = timezone.now()
@@ -41,7 +40,7 @@ def auto_reply(sender, message, **kwargs):
     Message.objects.create(
         thread       = thread,
         message_id   = msg_id,
-        in_reply_to  = in_reply or None,
+        in_reply_to  = in_reply or "None",
         from_address = from_addr,
         to_addresses = "voltwaydryft@gmail.com",
         subject      = subj,
@@ -53,23 +52,25 @@ def auto_reply(sender, message, **kwargs):
     reply_subject = "Re: " + (message.subject or "")
     reply_body = generate_response(f"From: {from_addr}\nSubject: {message.subject}\nBody: {body_text}")
 
+    outgoing_msg_id = make_msgid(domain="voltwaydryft.com")
+
     reply = EmailMessage(
         subject=reply_subject,
         body=reply_body,
         to=[from_addr],  # now a clean list of one real email string
-        headers={
-            "In-Reply-To": message.message_id or "",
-            "References": message.message_id or "",
-        },
     )
+
+    reply.extra_headers = {
+        "Message-ID":  outgoing_msg_id,
+        "In-Reply-To": message.message_id or "",
+        "References": message.message_id or "",
+    }
 
     try:
         reply.send(fail_silently=False)
         logger.info(f"Sent auto-reply to {from_addr}")
     except Exception:
         logger.exception(f"Failed sending auto-reply to {from_addr}")
-    
-    outgoing_msg_id = make_msgid()
     
     Message.objects.create(
         thread       = thread,
