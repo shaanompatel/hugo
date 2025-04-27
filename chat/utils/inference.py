@@ -3,7 +3,7 @@ from google.genai import types
 from chat.utils.db_tools import execute_sql_query, get_database_schema
 
 # Set up with API key
-API_KEY = 'API_KEY'
+API_KEY = 'AIzaSyDb1wD4eXH31bdJvCM0YWj7eK9eYsv8k7A'
 
 def generate_response(query: str):
     """Generate a response using the GenAI model."""
