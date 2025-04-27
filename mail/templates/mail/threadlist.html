@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Conversations</h1>
+    <ul>
+      {% for t in threads %}
+        <li>
+          <a href="{% url 'thread_detail' t.id %}">
+            {{ t.subject|default:"(no subject)" }}
+            — started {{ t.created_at|date:"Y-m-d H:i" }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
