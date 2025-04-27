@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hugo AI - Procurement Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #5E60CE;
+            --primary-dark: #4546A5;
+            --primary-light: #7678ED;
+            --secondary-color: #64DFDF;
+            --accent-color: #FF5C8D;
+            --success-color: #06D6A0;
+            --warning-color: #FFD166;
+            --danger-color: #EF476F;
+            --light-bg: #F6F8FF;
+            --dark-text: #2D3748;
+            --light-text: #fff;
+            --card-shadow: 0 10px 20px rgba(94, 96, 206, 0.1);
+            --border-radius: 16px;
+            --button-radius: 12px;
+            --gradient-bg: linear-gradient(135deg, #5E60CE, #64DFDF);
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .brand-gradient {
+            background: var(--gradient-bg);
+            box-shadow: 0 4px 12px rgba(94, 96, 206, 0.25);
+        }
+        
+        .navbar {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: white;
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            margin-right: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-custom {
+            font-size: 0.75rem;
+            padding: 0.5em 1em;
+            border-radius: 30px;
+            font-weight: 500;
+            background-color: rgba(94, 96, 206, 0.12);
+            color: var(--primary-color);
+            border: 1px solid rgba(94, 96, 206, 0.2);
+        }
+        
+        .chat-container {
+            max-height: calc(100vh - 220px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .message {
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-content {
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+            max-width: 80%;
+        }
+        
+        .user-message .message-content {
+            background: var(--gradient-bg);
+            color: var(--light-text);
+            border-bottom-right-radius: 0;
+            margin-left: auto;
+        }
+        
+        .bot-message .message-content {
+            background-color: white;
+            border: 1px solid rgba(94, 96, 206, 0.15);
+            border-bottom-left-radius: 0;
+        }
+        
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .user-avatar {
+            background: linear-gradient(135deg, var(--accent-color), #FF8DC7);
+        }
+        
+        .bot-avatar {
+            background: var(--gradient-bg);
+        }
+        
+        .chat-input {
+            position: relative;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-top: 1.5rem;
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            position: relative;
+            width: 100%;
+        }
+        
+        .chat-input input {
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid rgba(94, 96, 206, 0.1);
+            background-color: var(--light-bg);
+            padding-left: 20px;
+            padding-right: 60px;
+            height: 56px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .chat-input input:focus {
+            box-shadow: 0 0 0 3px rgba(94, 96, 206, 0.15);
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .send-button {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-bg);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 8px rgba(94, 96, 206, 0.25);
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(94, 96, 206, 0.35);
+        }
+        
+        .send-button:active {
+            transform: translateY(0);
+        }
+        
+        .tag-cloud {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.35rem;
+            border-radius: 30px;
+            background-color: rgba(94, 96, 206, 0.08);
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(94, 96, 206, 0.15);
+            font-weight: 500;
+        }
+        
+        .tag-cloud:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(94, 96, 206, 0.25);
+        }
+        
+        .typing {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+        
+        .suggested-action {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin-right: 0.6rem;
+            margin-bottom: 0.6rem;
+            background-color: rgba(94, 96, 206, 0.08);
+            border: 1px solid rgba(94, 96, 206, 0.15);
+            border-radius: 10px;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .suggested-action:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(94, 96, 206, 0.25);
+        }
+
+        .alert-custom {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border-left: 4px solid var(--warning-color);
+            background-color: rgba(255, 209, 102, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        /* Data table styling */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .data-table th {
+            background-color: rgba(94, 96, 206, 0.1);
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.8rem 1rem;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: rgba(94, 96, 206, 0.03);
+        }
+
+        .data-table td {
+            padding: 0.8rem 1rem;
+            border-top: 1px solid rgba(94, 96, 206, 0.08);
+        }
+
+        .data-card {
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            border: 1px solid rgba(94, 96, 206, 0.1);
+        }
+
+        .data-card-title {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-low {
+            background-color: rgba(239, 71, 111, 0.15);
+            color: var(--danger-color);
+        }
+
+        .status-medium {
+            background-color: rgba(255, 209, 102, 0.15);
+            color: #E6B800;
+        }
+
+        .status-good {
+            background-color: rgba(6, 214, 160, 0.15);
+            color: var(--success-color);
+        }
+
+        /* Metric cards */
+        .metric-card {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: 1px solid rgba(94, 96, 206, 0.1);
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        /* Progress bars */
+        .progress-thin {
+            height: 6px;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Customize scrollbar */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(94, 96, 206, 0.3);
+            border-radius: 3px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(94, 96, 206, 0.5);
+        }
+
+        /* Rich text formatting */
+        .formatted-content ul, 
+        .formatted-content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .formatted-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formatted-content h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .formatted-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .formatted-content code {
+            background: var(--light-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--primary-dark);
+        }
+
+        .formatted-content pre {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid rgba(94, 96, 206, 0.1);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="logo-icon brand-gradient d-flex align-items-center justify-content-center">
+                    <i class="bi bi-robot text-white"></i>
+                </div>
+                Hugo AI <span class="ms-2 badge-custom">Procurement Assistant</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Chat Container -->
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <!-- Chat Messages -->
+                <div class="chat-container mb-4" id="chat-container">
+                    <!-- Welcome Message -->
+                    <div class="message bot-message">
+                        <div class="d-flex">
+                            <div class="avatar bot-avatar me-3">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="message-content">
+                                    <h6 class="fw-bold mb-3">Hugo</h6>
+                                    <p class="mb-3">
+                                        Welcome to Voltway's procurement assistant! I'm Hugo, your AI co-pilot for supply chain operations. 
+                                        How can I help you today?
+                                    </p>
+                                    <div class="mt-3">
+                                        <span class="tag-cloud"><i class="bi bi-box-seam me-2"></i> Inventory Status</span>
+                                        <span class="tag-cloud"><i class="bi bi-truck me-2"></i> Supplier Updates</span>
+                                        <span class="tag-cloud"><i class="bi bi-graph-up me-2"></i> Demand Forecast</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-2 ms-2">09:00 AM</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample User Message -->
+                    <div class="message user-message">
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex flex-column align-items-end">
+                                <div class="message-content">
+                                    <p class="mb-0">How many S2 V2 scooters can we build next week?</p>
+                                </div>
+                                <small class="text-muted mt-2 me-2">09:01 AM</small>
+                            </div>
+                            <div class="avatar user-avatar ms-3">
+                                <span>SC</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Hugo Response -->
+                    <div class="message bot-message">
+                        <div class="d-flex">
+                            <div class="avatar bot-avatar me-3">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="message-content">
+                                    <h6 class="fw-bold mb-3">Hugo</h6>
+                                    <p class="mb-1">
+                                        Based on current inventory levels and scheduled deliveries, you can build approximately <strong>217 S2 V2 scooters</strong> next week.
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Limiting factor:</strong> Frame components (FRM-S2-V2) with only 217 units available.
+                                    </p>
+                                    <div class="alert-custom my-3">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        The next delivery of 150 frame units is scheduled for Monday after next.
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="suggested-action">
+                                            <i class="bi bi-lightning me-2"></i> Request expedited delivery
+                                        </div>
+                                        <div class="suggested-action">
+                                            <i class="bi bi-people me-2"></i> View suppliers
+                                        </div>
+                                        <div class="suggested-action">
+                                            <i class="bi bi-file-earmark-text me-2"></i> Show detailed report
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-2 ms-2">09:02 AM</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input">
+                    <form id="chat-form">
+                        <div class="chat-input-wrapper">
+                            <input type="text" class="form-control" id="message-input" placeholder="Ask Hugo anything about procurement..." autofocus>
+                            <button type="submit" class="send-button">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const chatContainer = document.getElementById('chat-container');
+            
+            // Function to get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Handle tag cloud clicks
+            document.querySelectorAll('.tag-cloud').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    messageInput.value = this.textContent.trim();
+                    messageInput.focus();
+                });
+            });
+            
+            // Handle suggested action clicks
+            document.querySelectorAll('.suggested-action').forEach(action => {
+                action.addEventListener('click', function() {
+                    messageInput.value = this.textContent.trim();
+                    messageInput.focus();
+                });
+            });
+            
+            // Process message content to look for special formatting
+            // Process message content to look for special formatting
+        function processMessageContent(message) {
+            let html = message;
+
+            // --- Basic Markdown to HTML Conversion ---
+
+            // 1. Handle Bold (**text**) - careful not to mess up URLs if they contain **
+            // This regex looks for ** followed by non-** characters, then **
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // 2. Handle Headings (lines ending with :) - Let's make them h4
+            // Split into lines, process, then rejoin
+            let lines = html.split('\n');
+            let inList = false;
+            lines = lines.map(line => {
+                line = line.trim(); // Trim whitespace
+
+                // Check for list items (* item)
+                if (line.startsWith('* ')) {
+                    if (!inList) {
+                        inList = true;
+                        // Return the opening ul tag plus the first li tag
+                        return '<ul><li>' + line.substring(2).trim() + '</li>';
+                    } else {
+                        // Return just the li tag
+                        return '<li>' + line.substring(2).trim() + '</li>';
+                    }
+                } else {
+                    // If we were in a list and the current line is not a list item, close the list
+                    let closingTag = '';
+                    if (inList) {
+                        closingTag = '</ul>';
+                        inList = false;
+                    }
+
+                    // Check for potential headings (ends with colon)
+                    if (line.endsWith(':') && line.length > 1) {
+                         // Check if it's just a calculation result line (e.g., P300: 158 / 1 = 158) - avoid making these h4
+                         if (!line.includes('=') && !line.match(/^\w+:\s*\d+\s*$/)) {
+                             return closingTag + '<h4>' + line.slice(0, -1) + ':</h4>'; // Keep the colon
+                         } else {
+                              // Treat as regular paragraph or part of calculation list
+                             return closingTag + '<p>' + line + '</p>'; // Wrap non-list, non-heading lines in <p>
+                         }
+                    } else if (line.trim() === '') {
+                        // Handle empty lines if needed (e.g., close list)
+                        return closingTag;
+                    } else {
+                         // Wrap other non-empty lines in <p> tags
+                         return closingTag + '<p>' + line + '</p>';
+                    }
+                }
+            });
+
+             // Ensure any open list at the end is closed
+             if (inList) {
+                 lines.push('</ul>');
+             }
+
+            html = lines.join(''); // Rejoin lines (already wrapped in elements)
+
+            // --- Existing Table/Alert Processing --- (Keep this part)
+            // Check for tables and format them
+            if (html.includes('<table>')) {
+                html = html.replace(/<table>/g, '<table class="data-table">');
+            }
+
+            // Check for warning/alert messages
+            if (html.toLowerCase().includes('warning:') || html.toLowerCase().includes('alert:')) {
+                html = html.replace(/warning:(.*?)(?=<br>|<p>|$)/gi, '<div class="alert-custom"><i class="bi bi-exclamation-triangle-fill me-2"></i>$1</div>');
+                html = html.replace(/alert:(.*?)(?=<br>|<p>|$)/gi, '<div class="alert-custom"><i class="bi bi-exclamation-triangle-fill me-2"></i>$1</div>');
+            }
+            // --- End Existing ---
+
+            // Replace remaining literal newlines with <br> (optional, depends on desired spacing)
+            // Note: We wrapped most content in <p>, <ul>, <h4> already, so explicit <br> might not be needed
+            // html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+            
+            // Handle form submission
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addUserMessage(message);
+                
+                // Clear input
+                messageInput.value = '';
+                
+                // Show typing indicator
+                const typingId = showTypingIndicator();
+                
+                // Send message to server
+                fetch('/chat/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove typing indicator
+                    hideTypingIndicator(typingId);
+                    // Process the response for special formatting
+                    const processedResponse = processMessageContent(data.response);
+                    // Add bot response
+                    addBotMessage(processedResponse, data.timestamp);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hideTypingIndicator(typingId);
+                    addBotMessage("Sorry, I encountered an error. Please try again.", getCurrentTime());
+                });
+            });
+            
+            // Function to add user message
+            function addUserMessage(message) {
+                const time = getCurrentTime();
+                const html = `
+                <div class="message user-message">
+                    <div class="d-flex justify-content-end">
+                        <div class="d-flex flex-column align-items-end">
+                            <div class="message-content">
+                                <p class="mb-0">${message}</p>
+                            </div>
+                            <small class="text-muted mt-2 me-2">${time}</small>
+                        </div>
+                        <div class="avatar user-avatar ms-3">
+                            <span>SC</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                chatContainer.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+            }
+            
+            // Function to add bot message
+            function addBotMessage(message, timestamp) {
+                const time = timestamp || getCurrentTime();
+                const html = `
+                <div class="message bot-message">
+                    <div class="d-flex">
+                        <div class="avatar bot-avatar me-3">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <div class="message-content">
+                                <h6 class="fw-bold mb-3">Hugo</h6>
+                                <div class="formatted-content">${message}</div>
+                            </div>
+                            <small class="text-muted mt-2 ms-2">${time}</small>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                chatContainer.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+            }
+            
+            // Function to show typing indicator
+            function showTypingIndicator() {
+                const id = 'typing-' + Date.now();
+                const html = `
+                <div id="${id}" class="message bot-message">
+                    <div class="d-flex">
+                        <div class="avatar bot-avatar me-3">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <div class="message-content">
+                                <div class="typing">
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
+                                    <div class="typing-dot"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                chatContainer.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+                return id;
+            }
+            
+            // Function to hide typing indicator
+            function hideTypingIndicator(id) {
+                const element = document.getElementById(id);
+                if (element) element.remove();
+            }
+            
+            // Function to get current time
+            function getCurrentTime() {
+                const now = new Date();
+                return now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+            
+            // Function to scroll to bottom of chat
+            function scrollToBottom() {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
