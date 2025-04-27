@@ -1,0 +1,8 @@
+{% block content %}
+  <h1>Supply Chain Graph</h1>
+
+  {# THIS IS THE CRUCIAL PART - use the |safe filter #}
+  {{ graph_html|safe }}
+
+  {# Any other content #}
+{% endblock %}

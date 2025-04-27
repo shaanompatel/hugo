@@ -88,89 +88,8 @@
       background-color: var(--accent);
     }
     
-    .feature-stock .feature-icon {
-      background-color: var(--success);
-    }
-    
     .feature-graph .feature-icon {
       background-color: var(--warning);
-    }
-    
-    .stats-card {
-      background-color: white;
-      border-radius: 1rem;
-      box-shadow: var(--card-shadow);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: var(--transition);
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    
-    .stats-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-    
-    .stats-card .value {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
-    }
-    
-    .stats-card .label {
-      color: #6c757d;
-      font-size: 0.875rem;
-    }
-    
-    .activity-card {
-      background-color: white;
-      border-radius: 1rem;
-      box-shadow: var(--card-shadow);
-      padding: 1.5rem;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .activity-card h5 {
-      margin-bottom: 1.5rem;
-    }
-    
-    .activity-items-container {
-      flex-grow: 1;
-      overflow-y: auto;
-      max-height: 300px;
-    }
-    
-    .activity-item {
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      display: flex;
-      align-items: flex-start;
-    }
-    
-    .activity-item:last-child {
-      border-bottom: none;
-    }
-    
-    .activity-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 1rem;
-      color: white;
-      flex-shrink: 0;
-    }
-    
-    .activity-content {
-      flex-grow: 1;
     }
     
     .supply-chain-visual {
@@ -191,11 +110,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      margin: 2rem 0;
     }
     
     .supply-chain-visual svg {
       width: 100%;
-      height: 300px;
+      height: 350px;
       max-width: 100%;
     }
     
@@ -231,12 +151,6 @@
       animation: pulse 2s infinite;
     }
     
-    .quick-actions .btn {
-      margin: 0.5rem;
-      display: inline-flex;
-      align-items: center;
-    }
-    
     @keyframes pulse {
       0% {
         box-shadow: 0 0 0 0 rgba(76, 201, 160, 0.4);
@@ -252,10 +166,6 @@
     @media (max-width: 768px) {
       .welcome-section {
         padding: 1.5rem;
-      }
-      
-      .stats-card .value {
-        font-size: 1.75rem;
       }
       
       .feature-card .feature-icon {
@@ -281,8 +191,8 @@
   </div>
 
   <!-- Feature Navigation Cards -->
-  <div class="row mb-4">
-    <div class="col-md-6 col-lg-3 mb-4">
+  <div class="row mb-5">
+    <div class="col-md-4 mb-4">
       <div class="feature-card feature-chat">
         <div class="card-body text-center">
           <div class="feature-icon">
@@ -294,7 +204,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 col-lg-3 mb-4">
+    <div class="col-md-4 mb-4">
       <div class="feature-card feature-inbox">
         <div class="card-body text-center">
           <div class="feature-icon">
@@ -306,19 +216,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 col-lg-3 mb-4">
-      <div class="feature-card feature-stock">
-        <div class="card-body text-center">
-          <div class="feature-icon">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <h5 class="card-title">Stock Predictor</h5>
-          <p class="card-text">LSTM-based predictions for inventory management.</p>
-          <a href="stock" class="btn btn-success">View Predictions</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4">
+    <div class="col-md-4 mb-4">
       <div class="feature-card feature-graph">
         <div class="card-body text-center">
           <div class="feature-icon">
@@ -332,63 +230,11 @@
     </div>
   </div>
 
-  <!-- Data Insights Section -->
-  <h2 class="mb-4">Today's Insights</h2>
-  <div class="row mb-4">
-    <div class="col-md-6 col-lg-3 mb-4">
-      <div class="stats-card">
-        <div class="value text-primary">{{ stats.response_rate }}%</div>
-        <div class="label">Vendor Response Rate</div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4">
-      <div class="stats-card">
-        <div class="value text-success">{{ stats.pending_orders }}</div>
-        <div class="label">Pending Orders</div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4">
-      <div class="stats-card">
-        <div class="value text-warning">{{ stats.stock_alerts }}</div>
-        <div class="label">Stock Alerts</div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-3 mb-4">
-      <div class="stats-card">
-        <div class="value text-info">${{ stats.monthly_savings|floatformat:1 }}K</div>
-        <div class="label">Est. Monthly Savings</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Interactive Elements -->
-  <div class="row">
-    <div class="col-md-5 mb-4">
-      <div class="activity-card">
-        <h5>Recent Activity</h5>
-        <div class="activity-items-container">
-          {% for activity in recent_activities %}
-          <div class="activity-item">
-            <div class="activity-badge bg-{{ activity.badge_type }}">
-              <i class="fas fa-{{ activity.icon }}"></i>
-            </div>
-            <div class="activity-content">
-              <div class="fw-bold">{{ activity.description }}</div>
-              <small class="text-muted">{{ activity.timestamp|date:"F j, Y" }}, {{ activity.timestamp|time:"g:i A" }}</small>
-            </div>
-          </div>
-          {% empty %}
-          <div class="text-center text-muted py-4">
-            <i class="fas fa-clock fa-2x mb-3"></i>
-            <p>No recent activity to show</p>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-    <div class="col-md-7 mb-4">
+  <!-- Supply Chain Visualization Section -->
+  <div class="row mb-5">
+    <div class="col-12">
       <div class="supply-chain-visual">
-        <h5 class="mb-4">Supply Chain Network</h5>
+        <h4 class="mb-3">Supply Chain Network</h4>
         <p class="text-muted mb-3">Interactive graph visualization of your current supply chain</p>
         <div class="supply-chain-container">
           <svg viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
@@ -430,34 +276,35 @@
           </svg>
         </div>
         <div class="text-center mt-3">
-          <a href="supply" class="btn btn-sm btn-outline-secondary">View Full Graph</a>
+          <p class="text-muted mb-2">Hover over nodes to see connections</p>
+          <a href="supply" class="btn btn-outline-warning">View Full Supply Chain Analysis</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Quick Actions -->
-  <div class="row mb-4">
+  <!-- Status Summary Card -->
+  <div class="row">
     <div class="col-12">
       <div class="card shadow-sm border-0 rounded-lg">
         <div class="card-body">
-          <h5 class="card-title mb-3">Quick Actions</h5>
-          <div class="d-flex flex-wrap quick-actions">
-            <a href="phony" class="btn btn-outline-primary">
-              <i class="fas fa-plus-circle me-2"></i> New Order
-            </a>
-            <a href="phony" class="btn btn-outline-success">
-              <i class="fas fa-sync me-2"></i> Refresh Predictions
-            </a>
-            <a href="phony" class="btn btn-outline-info">
-              <i class="fas fa-file-export me-2"></i> Export Reports
-            </a>
-            <a href="phony" class="btn btn-outline-warning">
-              <i class="fas fa-search me-2"></i> Vendor Search
-            </a>
-            <a href="phony" class="btn btn-outline-secondary">
-              <i class="fas fa-cog me-2"></i> System Settings
-            </a>
+          <h5 class="card-title mb-3">System Status</h5>
+          <div class="d-flex flex-wrap justify-content-around">
+            <div class="text-center px-4 py-2">
+              <i class="fas fa-comment-dots text-primary mb-2" style="font-size: 1.5rem;"></i>
+              <div class="fw-bold">Chat System</div>
+              <div class="text-success">Online</div>
+            </div>
+            <div class="text-center px-4 py-2">
+              <i class="fas fa-inbox text-info mb-2" style="font-size: 1.5rem;"></i>
+              <div class="fw-bold">Smart Inbox</div>
+              <div class="text-success">{{ unread_messages }} new</div>
+            </div>
+            <div class="text-center px-4 py-2">
+              <i class="fas fa-project-diagram text-warning mb-2" style="font-size: 1.5rem;"></i>
+              <div class="fw-bold">Supply Graph</div>
+              <div class="text-success">Updated</div>
+            </div>
           </div>
         </div>
       </div>

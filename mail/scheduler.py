@@ -24,7 +24,7 @@ def start():
     _scheduler.add_job(
         fetch_mail_job,
         trigger="interval",
-        minutes=0.25,
+        minutes=10,
         id="fetch-mail-job",
         replace_existing=True,
     )
